@@ -33,13 +33,25 @@ PlayerEffect::PlayerEffect()
 	// EFFECT_DASH_L
 	{
 		wstring strImage = L"./Textures/Megaman/MyResource/EFFECT/EFFECT_DASH_LEFT.png";
-		CreateClip(strImage, 50, 50, 7, AnimationClip::eState::Once);
+		CreateClip(strImage, 50, 50, 7, AnimationClip::eState::End, 0.06f);
 	}
 
 	// EFFECT_DASH_R
 	{
 		wstring strImage = L"./Textures/Megaman/MyResource/EFFECT/EFFECT_DASH_RIGHT.png";
-		CreateClip(strImage, 50, 50, 7, AnimationClip::eState::Once);
+		CreateClip(strImage, 50, 50, 7, AnimationClip::eState::End, 0.06f);
+	}
+
+	// EFFECT_DASH_L
+	{
+		wstring strImage = L"./Textures/Megaman/resources/Player/Effect/Effect_Back_Left.bmp";
+		CreateClip(strImage, 100, 64, 9, AnimationClip::eState::End, 0.03f);
+	}
+
+	// EFFECT_DASH_R
+	{
+		wstring strImage = L"./Textures/Megaman/resources/Player/Effect/Effect_Back_Right.bmp";
+		CreateClip(strImage, 100, 64, 9, AnimationClip::eState::End, 0.03f);
 	}
 }
 
@@ -64,7 +76,7 @@ void PlayerEffect::Render()
 	m_pAnimation->Render();
 }
 
-void PlayerEffect::CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state)
+void PlayerEffect::CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state, float speed)
 {
 	shared_ptr<AnimationClip> pClip = make_shared<AnimationClip>(state);
 	shared_ptr<Texture> pTexture = m_pAnimation->GetTexture();
@@ -76,6 +88,6 @@ void PlayerEffect::CreateClip(wstring strImage, int w, int h, int count, Animati
 		int sy = 0;
 		int ex = sx + w;
 		int ey = h;
-		pClip->AddFrame(pTexture, strImage, sx, sy, ex, ey, 0.1f);
+		pClip->AddFrame(pTexture, strImage, sx, sy, ex, ey, speed);
 	}
 }

@@ -10,6 +10,8 @@ public:
 		EFFECT_CHARGE_BODY_GREEN,
 		EFFECT_DASH_L,
 		EFFECT_DASH_R,
+		EFFECT_DASHDUST_L,
+		EFFECT_DASHDUST_R,
 	};
 
 	PlayerEffect();
@@ -27,10 +29,10 @@ public: // 가상함수
 	void PostRender() {};
 
 private:
-	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop);
+	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop, float speed = 0.1f);
 
 private:
 	shared_ptr<class Animation>	 m_pAnimation;
-	eState					 m_nState = eState::EFFECT_CHARGE;
-	function<void()>		 m_fpEndCallback  = nullptr;
+	eState						m_nState = eState::EFFECT_CHARGE;
+	function<void()>			m_fpEndCallback  = nullptr;
 };

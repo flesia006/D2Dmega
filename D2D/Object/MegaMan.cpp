@@ -18,8 +18,9 @@ MegaMan::MegaMan()
 //	m_cvEffects[GREEN_CHARGE]	= make_shared<PlayerEffect>();
 	
 
-	for (size_t i = 0; i < 5; i++)
+	for (size_t i = 0; i < 6; i++)
 		m_cvEffects.push_back(new PlayerEffect());
+
 
 }
 
@@ -39,34 +40,52 @@ void MegaMan::PreUpdate(Vector2& position)
 {
 	// VK_LEFT
 	{
-		if (KEYBOARD->Up(VK_LEFT))
-		{
-			// LEFT MOVE, LEFT JUMP, LEFT FALL 인경우
-			if (m_nState != eState::LEFT_IDLE)
-			{
-				if (m_bGround) 
-					SetState(eState::LEFT_IDLE);
-			}
-		}
 		if (KEYBOARD->Press(VK_LEFT))
 		{
 			if (m_nState != eState::LEFT_MOVE && !IsJumping() && !IsFalling() && !IsDashing())
 				SetState(eState::LEFT_MOVE);
 
 			if (m_nState == eState::LEFT_MOVE || m_nState == LEFT_JUMP 
-				|| m_nState == LEFT_FALL || m_nState == LEFT_DASH)
+				|| m_nState == LEFT_FALL || m_nState == LEFT_DASH || m_nState == LEFT_NOJUMPFALL)
 				position.x = position.x - m_SpeedX * TIME->Delta();
 
 			if (IsJumping() || IsFalling())
 				m_Angle = LEFT_ANGLE;
 
-			if (m_nState == eState::RIGHT_JUMP)
-				SetState(eState::LEFT_JUMP);
+			if (m_nState == RIGHT_JUMP)				SetState(LEFT_JUMP);
+			if (m_nState == RIGHT_NOJUMPFALL)		SetState(LEFT_NOJUMPFALL);
+		}
+
+		if (KEYBOARD->Up(VK_LEFT))
+		{
+			// LEFT MOVE, LEFT JUMP, LEFT FALL 인경우
+			if (m_nState != eState::LEFT_IDLE)
+			{
+				if (m_bGround)
+					SetState(eState::LEFT_IDLE);
+			}
 		}
 	}
 
 	// VK_RIGHT
 	{
+		if (KEYBOARD->Press(VK_RIGHT))
+		{
+			if (m_nState != eState::RIGHT_MOVE && !IsJumping() && !IsFalling() && !IsDashing())
+				SetState(eState::RIGHT_MOVE);
+
+			if (m_nState == eState::RIGHT_MOVE || m_nState == RIGHT_JUMP 
+				|| m_nState == RIGHT_FALL || m_nState == RIGHT_DASH || m_nState == RIGHT_NOJUMPFALL)
+				position.x = position.x + m_SpeedX * TIME->Delta();
+
+			if (IsJumping() || IsFalling())
+				m_Angle = RIGHT_ANGLE;
+
+			if (m_nState == LEFT_JUMP)				SetState(RIGHT_JUMP);
+			if (m_nState == LEFT_NOJUMPFALL)		SetState(RIGHT_NOJUMPFALL);
+
+		}
+
 		if (KEYBOARD->Up(VK_RIGHT))
 		{
 			// LEFT MOVE, LEFT JUMP, LEFT FALL 인경우
@@ -75,21 +94,6 @@ void MegaMan::PreUpdate(Vector2& position)
 				if (m_bGround)
 					SetState(eState::RIGHT_IDLE);
 			}
-		}
-		if (KEYBOARD->Press(VK_RIGHT))
-		{
-			if (m_nState != eState::RIGHT_MOVE && !IsJumping() && !IsFalling() && !IsDashing())
-				SetState(eState::RIGHT_MOVE);
-
-			if (m_nState == eState::RIGHT_MOVE || m_nState == RIGHT_JUMP 
-				|| m_nState == RIGHT_FALL || m_nState == RIGHT_DASH)
-				position.x = position.x + m_SpeedX * TIME->Delta();
-
-			if (IsJumping() || IsFalling())
-				m_Angle = RIGHT_ANGLE;
-
-			if (m_nState == eState::LEFT_JUMP)
-				SetState(eState::RIGHT_JUMP);
 		}
 	}
 
@@ -166,41 +170,62 @@ void MegaMan::PreUpdate(Vector2& position)
 
 	// Dash
 	{
-		if (KEYBOARD->Press('Z'))
-		{			
-			if (!m_bGround)
+		if (KEYBOARD->Down('Z'))
+		{
+			if (!m_bGround || IsJumping())
 				return;
 
+			m_cvEffects[DASH_EFCT]->SetActive(true);
+			m_cvEffects[DASHDUST_EFCT]->SetActive(true);
+
+			if (m_nState % 2 == 0)
+			{
+				SetState(eState::LEFT_DASH);
+				m_cvEffects[DASHDUST_EFCT]->SetState(PlayerEffect::EFFECT_DASHDUST_L);
+				m_cvEffects[DASHDUST_EFCT]->SetPosition(Vector2(position.x + 90.0f, position.y - 35.0f));
+
+				m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_L);
+			}
+			else
+			{
+				SetState(eState::RIGHT_DASH);
+				m_cvEffects[DASHDUST_EFCT]->SetState(PlayerEffect::EFFECT_DASHDUST_R);
+				m_cvEffects[DASHDUST_EFCT]->SetPosition(Vector2(position.x - 90.0f, position.y - 35.0f));
+
+				m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_R);
+			}
+		}
+		if (KEYBOARD->Press('Z'))
+		{			
+			if (!m_bGround || IsJumping())
+				return;
 									
 			m_DashTime += TIME->Delta();
 			if (m_DashTime >= 0.6f)
 			{
 				m_cvEffects[DASH_EFCT]->SetActive(false);
+				m_cvEffects[DASHDUST_EFCT]->SetActive(false);
 
 				if (m_nState % 2 == 0)
 					SetState(eState::LEFT_MOVE);
-				else 
+				else
 					SetState(eState::RIGHT_MOVE);
 
 				SetNormalSpeed();
-
 			}
 			else
 			{
-				m_cvEffects[DASH_EFCT]->SetActive(true);
-
 				if (m_nState % 2 == 0)
 				{
 					SetState(eState::LEFT_DASH);
-					m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_L);
 					m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x + 90.0f, position.y - 35.0f));
 				}
-				else 
+				else
 				{
 					SetState(eState::RIGHT_DASH);
-					m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_R);
 					m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x - 90.0f, position.y - 35.0f));
 				}
+
 				SetDashSpeed();
 			}
 
@@ -223,7 +248,12 @@ void MegaMan::PreUpdate(Vector2& position)
 	// 1. 초기, 2. Jumping, 3. Falling
 	if ((m_bGround == false) && (!(IsJumping())))
 	{
-		position.y = position.y - 3;
+		if (m_nState % 2 == 0)
+			SetState(LEFT_NOJUMPFALL);
+		else
+			SetState(RIGHT_NOJUMPFALL);
+
+		position.y = position.y - 4;
 	}
 
 	// 2. Juming이거나 낙하인 상태에서 떨어지게 하기
@@ -248,7 +278,7 @@ void MegaMan::PreUpdate(Vector2& position)
 	case RIGHT_JUMP:
 		if (m_bGround)
 		{
-			if (m_nState == LEFT_JUMP)
+			if (m_nState % 2 == 0)
 				SetState(LEFT_FALL);
 			else
 				SetState(RIGHT_FALL);
@@ -266,7 +296,18 @@ void MegaMan::PreUpdate(Vector2& position)
 			m_FallTime = 0.0f;
 		}
 		break;
+	case LEFT_NOJUMPFALL:
+	case RIGHT_NOJUMPFALL:
+		if (m_bGround)
+		{
+			if (m_nState % 2 == 0)
+				SetState(LEFT_FALL);
+			else
+				SetState(RIGHT_FALL);
+		}
+		break;
 	}
+
 }
 
 
@@ -274,13 +315,8 @@ void MegaMan::Update(Matrix V, Matrix P)
 {
 	Vector2 position = GetPosition();
 
-
 	// KeyBoard
 	PreUpdate(position);
-
-
-
-
 	WallCheck(position);
 	GroundCheck(position);
 	SetPosition(position);
@@ -310,6 +346,10 @@ void MegaMan::Update(Matrix V, Matrix P)
 			delete m_cvBullets[i];
 			m_cvBullets.erase(m_cvBullets.begin() + i, m_cvBullets.begin() + i + 1);
 			m_cvBullets.shrink_to_fit();
+		}
+		else
+		{
+			m_cvBullets[i]->Update(V, P);
 		}
 	}
 
@@ -343,10 +383,7 @@ void MegaMan::Render()
 	}
 
 	for (auto& p : m_cvBullets)
-	{
-		if (p->IsActive())
 			p->Render();
-	}
 
 	for (auto& p : m_cvEffects)
 	{
@@ -398,8 +435,8 @@ void MegaMan::PostRender()
 	strStatus.push_back(L"ATTACK_CHARGE_R");
 	strStatus.push_back(L"LEFT_DASH");
 	strStatus.push_back(L"RIGHT_DASH");
-	strStatus.push_back(L"RIGHT_DASH");
-	strStatus.push_back(L"RIGHT_DASH");
+	strStatus.push_back(L"LEFT_NOJUMPFALL");
+	strStatus.push_back(L"RIGHT_NOJUMPFALL");
 	strStatus.push_back(L"RIGHT_DASH");
 
 
@@ -567,15 +604,27 @@ void MegaMan::CreateAnimation()
 		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_RIGHT.png";
 		CreateClip(strImage, 100, 920, 8, AnimationClip::EndStay);
 	}
+
+	// LEFT_NOJUMPFALL
+	{
+		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_LEFT.png";
+		CreateClip(strImage, 100, 620, 1, AnimationClip::EndStay, 7);
+	}
+
+	// RIGHT_NOJUMPFALL
+	{
+		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_RIGHT.png";
+		CreateClip(strImage, 100, 620, 1, AnimationClip::EndStay, 7);
+	}
 }
 
-void MegaMan::CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state)
+void MegaMan::CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state, int start)
 {
 	shared_ptr<AnimationClip> pClip = make_shared<AnimationClip>(state);
 	shared_ptr<Texture>       pTexture = m_pAnimation->GetTexture();
 	m_pAnimation->AddClip(pClip);
 
-	for (int i = 0; i < count; i++)
+	for (int i = start; i < start + count; i++)
 	{
 		int sx = w * i + 20;
 		int sy = h;

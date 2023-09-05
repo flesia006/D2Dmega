@@ -28,6 +28,8 @@ public:
 		ATTACK_CHARGE_R,
 		LEFT_DASH,
 		RIGHT_DASH,
+		LEFT_NOJUMPFALL,
+		RIGHT_NOJUMPFALL,
 	};
 
 	enum effects
@@ -35,6 +37,7 @@ public:
 		BLUE_CHARGE,
 		GREEN_CHARGE,
 		DASH_EFCT,
+		DASHDUST_EFCT,
 		WALL_EFCT,
 		WALL_KICK
 	};
@@ -50,7 +53,7 @@ private:
 	void   SetState(eState state);
 	void   PreUpdate(Vector2& position);
 	void   CreateAnimation();
-	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop);
+	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop, int start = 0);
 	void   GroundCheck(Vector2& position);
 	void   WallCheck(Vector2& position);
 	bool   IsJumping()   { return((m_nState == LEFT_JUMP || m_nState == RIGHT_JUMP)); }
