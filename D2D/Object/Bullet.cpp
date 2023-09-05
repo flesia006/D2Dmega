@@ -38,7 +38,7 @@ Bullet::~Bullet()
 
 void Bullet::Update(Matrix V, Matrix P)
 {
-	const  float move_speed = 1200.0f;
+	const  float move_speed = 1500.0f;
 
 	if (!IsActive()) return;
 
@@ -82,7 +82,7 @@ void Bullet::Render()
 	if (!IsActive()) return;
 
 	m_pAnimation->Render();
-	m_pCollider->Render();
+	//m_pCollider->Render();
 }
 
 void Bullet::Reset()

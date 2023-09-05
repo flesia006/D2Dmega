@@ -33,8 +33,8 @@ S01_Field::S01_Field()
 
 	// Zone
 
-	Grounds.push_back(new Collider({ -6600.0f, 400.0f }, { -6599.0f,-400.0f }));
-	Grounds.push_back(new Collider({ 6599.0f, 400.0f }, { 6600.0f,-400.0f }));	
+	Grounds.push_back(new Collider({ -6600.0f, 400.0f }, { -6585.0f,-400.0f }));
+	Grounds.push_back(new Collider({ 6585.0f, 400.0f }, { 6600.0f,-400.0f }));	
 
 
 	Grounds.push_back(new Collider({ -6600.0f,-284.0f }, { -5197.0f,-400.0f }));
@@ -67,8 +67,7 @@ void S01_Field::Render()
 {
 	m_pBackground->Render();
 	OBJECTMANAGER->Render("MEGAMAN");
-//	m_pLine->Render();
-	for (auto& c : Grounds)		c->Render();
+//	for (auto& c : Grounds)		c->Render();
 }
 
 void S01_Field::PreRender()

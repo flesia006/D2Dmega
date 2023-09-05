@@ -369,10 +369,10 @@ void MegaMan::Update(Matrix V, Matrix P)
 void MegaMan::Render()
 {
 	m_pAnimation->Render();
-	m_pCollider->UpdateColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
-	m_pCollider->Render();
-	m_pFeet->Render();
-	m_pWall->Render();
+	//m_pCollider->UpdateColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
+	//m_pCollider->Render();
+	//m_pFeet->Render();
+	//m_pWall->Render();
 	
 	// 윈도우의 좌표 
 	Vector2 position = Vector2(20.0f, 70.0f);
@@ -409,9 +409,13 @@ void MegaMan::FireBullet()
 		pBullet->SetState(Bullet::L_FULL_CHARGE);
 
 	pBullet->SetActive(true);
-	pBullet->SetPosition(GetPosition());
 	pBullet->Reset();
-	pBullet->SetPosition(GetPosition());
+
+	if(m_nState % 2 ==0)
+		pBullet->SetPosition(Vector2(GetPosition().x - 45.0f, GetPosition().y + 20.0f));
+	else
+		pBullet->SetPosition(Vector2(GetPosition().x + 45.0f, GetPosition().y + 20.0f));
+
 	pBullet->SetDirection((UINT)(m_nState) % 2);
 	pBullet->SetScale(GetScale() * 1.1f);
 	m_cvBullets.push_back(pBullet);
@@ -645,12 +649,13 @@ void MegaMan::GroundCheck(Vector2& position)
 	auto grounds = pScene->GetGround();
 	if (!IsJumping() || m_bFalling == true)
 	{
-		for (auto& g : grounds)
+
+		for (size_t i = 2; i < grounds.size(); i++)
 		{
-			if (Collision::HitTest(g, m_pFeet))
+			if (Collision::HitTest(grounds[i], m_pFeet))
 			{
 				m_bGround = true;
-				position.y = g->GetPosition().y + g->GetScale().y / 2 + m_pCollider->GetScale().y / 2;
+				position.y = grounds[i]->GetPosition().y + grounds[i]->GetScale().y / 2 + m_pCollider->GetScale().y / 2;
 				break;
 			}
 			else m_bGround = false;
@@ -669,11 +674,11 @@ void MegaMan::WallCheck(Vector2& position)
 	{
 		if (Collision::HitTest(g, m_pWall))
 		{
-			if (m_nState == LEFT_MOVE && m_bGround == true && (m_Position.x > g->GetPosition().x))
+			if ((m_nState % 2 == 0) && (m_Position.x > g->GetPosition().x))
 			{
 				position.x = g->GetPosition().x + g->GetScale().x / 2 + m_pWall->GetScale().x / 2;
 			}
-			if (m_nState == RIGHT_MOVE && m_bGround == true && (m_Position.x < g->GetPosition().x))
+			if ((m_nState % 2 == 1)	&& (m_Position.x < g->GetPosition().x))
 			{
 				position.x = g->GetPosition().x - g->GetScale().x / 2 - m_pWall->GetScale().x / 2;
 			}
