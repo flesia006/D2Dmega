@@ -8,7 +8,8 @@ public:
 		EFFECT_CHARGE_BODY,
 		EFFECT_CHARGE_GREEN,
 		EFFECT_CHARGE_BODY_GREEN,
-		EFFECT_DASH
+		EFFECT_DASH_L,
+		EFFECT_DASH_R,
 	};
 
 	PlayerEffect();
@@ -26,7 +27,7 @@ public: // 가상함수
 	void PostRender() {};
 
 private:
-	void   CreateClip(wstring strImage, int w, int h, int count, int loop = 0);
+	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop);
 
 private:
 	shared_ptr<class Animation>	 m_pAnimation;

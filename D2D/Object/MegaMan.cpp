@@ -172,16 +172,32 @@ void MegaMan::PreUpdate(Vector2& position)
 			m_DashTime += TIME->Delta();
 			if (m_DashTime >= 0.6f)
 			{
+				m_cvEffects[DASH_EFCT]->SetActive(false);
+
 				if (m_nState % 2 == 0)
 					SetState(eState::LEFT_MOVE);
-				else SetState(eState::RIGHT_MOVE);
+				else 
+					SetState(eState::RIGHT_MOVE);
+
 				SetNormalSpeed();
+
 			}
 			else
 			{
+				m_cvEffects[DASH_EFCT]->SetActive(true);
+
 				if (m_nState % 2 == 0)
+				{
 					SetState(eState::LEFT_DASH);
-				else SetState(eState::RIGHT_DASH);
+					m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_L);
+					m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x + 90.0f, position.y - 35.0f));
+				}
+				else 
+				{
+					SetState(eState::RIGHT_DASH);
+					m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_R);
+					m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x - 90.0f, position.y - 35.0f));
+				}
 				SetDashSpeed();
 			}
 
@@ -193,6 +209,8 @@ void MegaMan::PreUpdate(Vector2& position)
 			else SetState(eState::RIGHT_IDLE);
 			SetNormalSpeed();
 			m_DashTime = 0.0f;
+			m_cvEffects[DASH_EFCT]->SetActive(false);
+
 		}
 
 
@@ -274,17 +292,12 @@ void MegaMan::Update(Matrix V, Matrix P)
 	m_pCollider->SetPosition(GetPosition());
 	m_pCollider->Update(V, P);
 
-	// Feet , Wall
 	m_pFeet->SetPosition(GetPosition() - Vector2(0.0f, 55.0f));
 	m_pFeet->Update(V, P);
 
 	m_pWall->SetPosition(GetPosition() + Vector2(0.0f, 15.0f));
 	m_pWall->Update(V, P);
 
-
-	// effect
-	m_cvEffects[BLUE_CHARGE]->Update(V, P);
-	m_cvEffects[GREEN_CHARGE]->Update(V, P);
 
 	// bullet
 	for (UINT i = 0; i < m_cvBullets.size(); i++)
@@ -297,7 +310,8 @@ void MegaMan::Update(Matrix V, Matrix P)
 		}
 	}
 
-	for (auto& p : m_cvBullets)
+	// effect
+	for (auto& p : m_cvEffects)
 	{
 		if(p->IsActive())
 			p->Update(V, P);
@@ -312,8 +326,6 @@ void MegaMan::Render()
 	m_pCollider->Render();
 	m_pFeet->Render();
 	m_pWall->Render();
-	m_cvEffects[BLUE_CHARGE]->Render();
-	m_cvEffects[GREEN_CHARGE]->Render();
 	
 	// 윈도우의 좌표 
 	Vector2 position = Vector2(20.0f, 70.0f);
@@ -328,6 +340,12 @@ void MegaMan::Render()
 	}
 
 	for (auto& p : m_cvBullets)
+	{
+		if (p->IsActive())
+			p->Render();
+	}
+
+	for (auto& p : m_cvEffects)
 	{
 		if (p->IsActive())
 			p->Render();

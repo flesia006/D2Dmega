@@ -68,9 +68,6 @@ private:
 	Collider*    m_pFeet = nullptr;
 	Collider*	 m_pWall = nullptr;
 	shared_ptr<class Texture>     m_pHPbar;
-	shared_ptr<class PlayerEffect>  m_pPlayerEffect1;
-	shared_ptr<class PlayerEffect>  m_pPlayerEffect2;
-	shared_ptr<class PlayerEffect>  m_pPlayerEffect3;
 	vector<PlayerEffect*> m_cvEffects;
 	vector<Bullet*> m_cvBullets;
 
@@ -83,12 +80,12 @@ private:
 	float  m_SpeedY = 8.0f;
 	float  m_Gravirty = 0.0f;
 	float  m_Angle = 0.0f;
+	float  m_dashDelay = 0.0f;
 	int    m_nHP   = 4;
 	float  m_ChargeCountTime = 0.0f;
 	float  m_FallTime = 0.0f;
 	float  m_DashTime = 0.0f;
 	bool   m_bCharge = false;
 	bool   m_bChargeFull = false;
-	float  m_dashDelay = 0.0f;
 };
 

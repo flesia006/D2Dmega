@@ -10,26 +10,37 @@ PlayerEffect::PlayerEffect()
 	// EFFECT_CHARGE
 	{
 		wstring strImage = L"./Textures/Megaman/MyResource/BULLET/EFFECT_CHARGE.png";
-		CreateClip(strImage, 100, 100, 10, 0);
+		CreateClip(strImage, 100, 100, 10);
 	}
 	// EFFECT_CHARGE_BODY
 	{
 		wstring strImage = L"./Textures/Megaman/MyResource/BULLET/EFFECT_CHARGE_BODY.png";
-		CreateClip(strImage, 100, 100, 4, 0);
+		CreateClip(strImage, 100, 100, 4);
 	}
 
 	// EFFECT_CHARGE_GREEN
 	{
 		wstring strImage = L"./Textures/Megaman/MyResource/BULLET/EFFECT_CHARGE_GREEN.bmp";
-		CreateClip(strImage, 100, 100, 10, 0);
+		CreateClip(strImage, 100, 100, 10);
 	}
 
 	// EFFECT_CHARGE_BODY_GREEN
 	{
 		wstring strImage = L"./Textures/Megaman/MyResource/BULLET/EFFECT_CHARGE_BODY_GREEN.bmp";
-		CreateClip(strImage, 100, 100, 4, 0);
+		CreateClip(strImage, 100, 100, 4);
 	}
 
+	// EFFECT_DASH_L
+	{
+		wstring strImage = L"./Textures/Megaman/MyResource/EFFECT/EFFECT_DASH_LEFT.png";
+		CreateClip(strImage, 50, 50, 7, AnimationClip::eState::Once);
+	}
+
+	// EFFECT_DASH_R
+	{
+		wstring strImage = L"./Textures/Megaman/MyResource/EFFECT/EFFECT_DASH_RIGHT.png";
+		CreateClip(strImage, 50, 50, 7, AnimationClip::eState::Once);
+	}
 }
 
 PlayerEffect::~PlayerEffect()
@@ -53,12 +64,8 @@ void PlayerEffect::Render()
 	m_pAnimation->Render();
 }
 
-void PlayerEffect::CreateClip(wstring strImage, int w, int h, int count, int loop)
+void PlayerEffect::CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state)
 {
-	AnimationClip::eState state = AnimationClip::eState::Loop;
-	if (loop == 0)
-		state = AnimationClip::eState::Once;
-
 	shared_ptr<AnimationClip> pClip = make_shared<AnimationClip>(state);
 	shared_ptr<Texture> pTexture = m_pAnimation->GetTexture();
 	m_pAnimation->AddClip(pClip);
