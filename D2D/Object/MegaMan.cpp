@@ -80,11 +80,14 @@ void MegaMan::PreUpdate(Vector2& position)
 		{
 			if (m_nState != eState::RIGHT_MOVE && !IsJumping() && !IsFalling() && !IsDashing())
 				SetState(eState::RIGHT_MOVE);
+
 			if (m_nState == eState::RIGHT_MOVE || m_nState == RIGHT_JUMP 
 				|| m_nState == RIGHT_FALL || m_nState == RIGHT_DASH)
 				position.x = position.x + m_SpeedX * TIME->Delta();
+
 			if (IsJumping() || IsFalling())
 				m_Angle = RIGHT_ANGLE;
+
 			if (m_nState == eState::LEFT_JUMP)
 				SetState(eState::RIGHT_JUMP);
 		}
