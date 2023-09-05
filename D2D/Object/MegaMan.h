@@ -64,8 +64,8 @@ private:
 	bool   IsMoveingRight() { return((m_nState == RIGHT_MOVE || m_nState == RIGHT_JUMP || m_nState == RIGHT_FALL)); }
 	bool   IsDashing() { return((m_nState == LEFT_DASH || m_nState == RIGHT_DASH)); }
 	void   OnEndPlayerEffect();
-	void   SetDashSpeed() { m_SpeedX = 660.0f; m_SpeedY = 8.8f; }
-	void   SetNormalSpeed() { m_SpeedX = 330.0f; m_SpeedY = 8.0f; }
+	void   SetDashSpeed() { m_SpeedX = 660.0f;  }
+	void   SetNormalSpeed() { m_SpeedX = 330.0f;  }
 
 	shared_ptr<class Animation>   m_pAnimation;
 	Collider*    m_pFeet = nullptr;
@@ -90,5 +90,6 @@ private:
 	float  m_DashTime = 0.0f;
 	bool   m_bCharge = false;
 	bool   m_bChargeFull = false;
+	bool   m_bDashJump = false;
 };
 

@@ -97,6 +97,83 @@ void MegaMan::PreUpdate(Vector2& position)
 		}
 	}
 
+
+	// Dash
+	{
+		if (m_bGround && !IsJumping())
+		{
+			if (KEYBOARD->Down('Z'))
+			{
+
+				m_cvEffects[DASH_EFCT]->SetActive(true);
+				m_cvEffects[DASHDUST_EFCT]->SetActive(true);
+
+				if (m_nState % 2 == 0)
+				{
+					SetState(eState::LEFT_DASH);
+					m_cvEffects[DASHDUST_EFCT]->SetState(PlayerEffect::EFFECT_DASHDUST_L);
+					m_cvEffects[DASHDUST_EFCT]->SetPosition(Vector2(position.x + 90.0f, position.y - 35.0f));
+
+					m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_L);
+				}
+				else
+				{
+					SetState(eState::RIGHT_DASH);
+					m_cvEffects[DASHDUST_EFCT]->SetState(PlayerEffect::EFFECT_DASHDUST_R);
+					m_cvEffects[DASHDUST_EFCT]->SetPosition(Vector2(position.x - 90.0f, position.y - 35.0f));
+
+					m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_R);
+				}
+				SetDashSpeed();
+			}
+
+			if (KEYBOARD->Press('Z'))
+			{
+				m_DashTime += TIME->Delta();
+				if (m_DashTime >= 0.6f)
+				{
+					m_cvEffects[DASH_EFCT]->SetActive(false);
+					m_cvEffects[DASHDUST_EFCT]->SetActive(false);
+
+					if (m_nState % 2 == 0)
+						SetState(eState::LEFT_MOVE);
+					else
+						SetState(eState::RIGHT_MOVE);
+
+					SetNormalSpeed();
+				}
+				else
+				{
+					if (m_nState % 2 == 0)
+						m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x + 90.0f, position.y - 35.0f));
+					else
+						m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x - 90.0f, position.y - 35.0f));
+
+					if (m_bDashJump == true)
+					{
+						SetNormalSpeed();
+						m_bDashJump = false;
+					}
+				}
+
+			}
+
+			if (KEYBOARD->Up('Z'))
+			{
+				if (m_nState % 2 == 0)
+					SetState(eState::LEFT_IDLE);
+				else SetState(eState::RIGHT_IDLE);
+				SetNormalSpeed();
+				m_DashTime = 0.0f;
+				m_cvEffects[DASH_EFCT]->SetActive(false);
+
+				if (m_bDashJump == true)
+					m_bDashJump = false;
+			}
+		}
+
+	}
+
 	// X Key : 점프
 	{
 		if (KEYBOARD->Down('X'))
@@ -114,6 +191,8 @@ void MegaMan::PreUpdate(Vector2& position)
 			else SetState(eState::RIGHT_JUMP);
 			m_Gravirty = 0.0f;	
 
+			if (KEYBOARD->Press('Z'))
+				m_bDashJump = true;
 		}
 	}
 
@@ -168,82 +247,7 @@ void MegaMan::PreUpdate(Vector2& position)
 		}
 	}
 
-	// Dash
-	{
-		if (KEYBOARD->Down('Z'))
-		{
-			if (!m_bGround || IsJumping())
-				return;
 
-			m_cvEffects[DASH_EFCT]->SetActive(true);
-			m_cvEffects[DASHDUST_EFCT]->SetActive(true);
-
-			if (m_nState % 2 == 0)
-			{
-				SetState(eState::LEFT_DASH);
-				m_cvEffects[DASHDUST_EFCT]->SetState(PlayerEffect::EFFECT_DASHDUST_L);
-				m_cvEffects[DASHDUST_EFCT]->SetPosition(Vector2(position.x + 90.0f, position.y - 35.0f));
-
-				m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_L);
-			}
-			else
-			{
-				SetState(eState::RIGHT_DASH);
-				m_cvEffects[DASHDUST_EFCT]->SetState(PlayerEffect::EFFECT_DASHDUST_R);
-				m_cvEffects[DASHDUST_EFCT]->SetPosition(Vector2(position.x - 90.0f, position.y - 35.0f));
-
-				m_cvEffects[DASH_EFCT]->SetState(PlayerEffect::EFFECT_DASH_R);
-			}
-		}
-		if (KEYBOARD->Press('Z'))
-		{			
-			if (!m_bGround || IsJumping())
-				return;
-									
-			m_DashTime += TIME->Delta();
-			if (m_DashTime >= 0.6f)
-			{
-				m_cvEffects[DASH_EFCT]->SetActive(false);
-				m_cvEffects[DASHDUST_EFCT]->SetActive(false);
-
-				if (m_nState % 2 == 0)
-					SetState(eState::LEFT_MOVE);
-				else
-					SetState(eState::RIGHT_MOVE);
-
-				SetNormalSpeed();
-			}
-			else
-			{
-				if (m_nState % 2 == 0)
-				{
-					SetState(eState::LEFT_DASH);
-					m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x + 90.0f, position.y - 35.0f));
-				}
-				else
-				{
-					SetState(eState::RIGHT_DASH);
-					m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x - 90.0f, position.y - 35.0f));
-				}
-
-				SetDashSpeed();
-			}
-
-		}
-		if (KEYBOARD->Up('Z'))
-		{
-			if (m_nState % 2 == 0)
-				SetState(eState::LEFT_IDLE);
-			else SetState(eState::RIGHT_IDLE);
-			SetNormalSpeed();
-			m_DashTime = 0.0f;
-			m_cvEffects[DASH_EFCT]->SetActive(false);
-
-		}
-
-
-
-	}
 
 	// 1. 초기, 2. Jumping, 3. Falling
 	if ((m_bGround == false) && (!(IsJumping())))
@@ -257,7 +261,7 @@ void MegaMan::PreUpdate(Vector2& position)
 	}
 
 	// 2. Juming이거나 낙하인 상태에서 떨어지게 하기
-	if ((m_bGround == false) && ((IsJumping())))
+	if ( m_bGround == false && IsJumping())
 	{
 		//낙하
 		position.y = position.y + sinf(m_Angle) * m_SpeedY - m_Gravirty;
