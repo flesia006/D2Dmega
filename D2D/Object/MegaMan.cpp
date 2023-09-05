@@ -17,8 +17,10 @@ MegaMan::MegaMan()
 //	m_pPlayerEffect1	= make_shared<PlayerEffect>();
 //	m_cvEffects[GREEN_CHARGE]	= make_shared<PlayerEffect>();
 	
-	m_cvEffects.push_back(new PlayerEffect());
-	m_cvEffects.push_back(new PlayerEffect());
+
+	for (size_t i = 0; i < 5; i++)
+		m_cvEffects.push_back(new PlayerEffect());
+
 }
 
 MegaMan::~MegaMan()
@@ -119,7 +121,6 @@ void MegaMan::PreUpdate(Vector2& position)
 				m_bChargeFull = true;
 				m_bCharge = false;
 
-				m_pPlayerEffect1->SetState(PlayerEffect::EFFECT_CHARGE_BODY_GREEN);
 				m_cvEffects[BLUE_CHARGE]->SetState(PlayerEffect::EFFECT_CHARGE_BODY_GREEN);
 				m_cvEffects[GREEN_CHARGE]->SetState(PlayerEffect::EFFECT_CHARGE_GREEN);
 
@@ -297,7 +298,10 @@ void MegaMan::Update(Matrix V, Matrix P)
 	}
 
 	for (auto& p : m_cvBullets)
-		p->Update(V, P);
+	{
+		if(p->IsActive())
+			p->Update(V, P);
+	}
 
 }
 
@@ -323,8 +327,11 @@ void MegaMan::Render()
 		position.x = position.x + 30.0f;
 	}
 
-	for (auto& a : m_cvBullets)
-		a->Render();
+	for (auto& p : m_cvBullets)
+	{
+		if (p->IsActive())
+			p->Render();
+	}
 }
 
 
