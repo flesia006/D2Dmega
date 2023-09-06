@@ -32,10 +32,10 @@ public:				// setter
 	void SetOffsetSize(float x, float y); 
 
 	void SetStop() { m_bPlay = false; }
-	void SetPlay() { m_nCurrentFrame = 0;  m_bPlay = true; }
+	void SetPlay(UINT currentFrameNo = 0) { m_nCurrentFrame = currentFrameNo;  m_bPlay = true; }
 	void SetTexture(shared_ptr<Texture> pTexture) { m_ptrTexture = pTexture; }
 
-
+	UINT GetCurrentFrameNo() { return m_nCurrentFrame; }
 
 private:
 	struct Frame

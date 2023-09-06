@@ -56,7 +56,7 @@ void Animation::SetOffsetSize(float x, float y)
 	}
 }
 
-void Animation::SetPlay(UINT PlayNo)
+void Animation::SetPlay(UINT PlayNo, UINT currentFrame)
 {
 	// 이상처리
 	if (m_cvAnimationClips.size() == 0) return;
@@ -68,7 +68,7 @@ void Animation::SetPlay(UINT PlayNo)
 		return;
 
 	m_nAnimeState = PlayNo;
-	pClip->SetPlay();
+	pClip->SetPlay(currentFrame);
 
 }
 

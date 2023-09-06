@@ -30,6 +30,8 @@ public:
 		RIGHT_DASH,
 		LEFT_NOJUMPFALL,
 		RIGHT_NOJUMPFALL,
+		LEFT_FIRE_MOVE,
+		RIGHT_FIRE_MOVE,
 	};
 
 	enum effects
@@ -52,9 +54,10 @@ private:
 	void   FireBullet();
 	void   SetState(eState state);
 	void   SetFireState(eState state);
+	void   SetNormalState(eState state);
 	void   PreUpdate(Vector2& position);
 	void   CreateAnimation();
-	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop, int start = 0);
+	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop, int start = 0, float speed = 0.1f);
 	void   GroundCheck(Vector2& position);
 	void   WallCheck(Vector2& position);
 	bool   IsJumping()   { return((m_nState == LEFT_JUMP || m_nState == RIGHT_JUMP)); }
@@ -89,6 +92,7 @@ private:
 	float  m_ChargeCountTime = 0.0f;
 	float  m_FallTime = 0.0f;
 	float  m_DashTime = 0.0f;
+	float  m_FireStateTime = 0.0f;
 	bool   m_bCharge = false;
 	bool   m_bChargeFull = false;
 	bool   m_bDashJump = false;

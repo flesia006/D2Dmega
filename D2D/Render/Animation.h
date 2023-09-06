@@ -23,7 +23,7 @@ public:
 	void SetRotation(float x, float y, float z) { m_pTexture->SetRotation(x, y, z); }
 	void SetOffsetSize(float x, float y);
 
-	void SetPlay(UINT PlayNo);
+	void SetPlay(UINT PlayNo, UINT currentFrame = 0);
 	void SetStop();
 
 public:				// getter
@@ -34,6 +34,7 @@ public:				// getter
 	Vector3  GetRotation()					{ return m_pTexture->GetRotation(); }
 	Vector2  GetTextureRealSize()			{ return m_pTexture->GetTextureRealSize(); }
 	UINT	 GetClipNo()					{ return m_nAnimeState; }
+	vector<shared_ptr<class AnimationClip>> GetCVAnimationClips () {return m_cvAnimationClips;	}
 
 
 private:

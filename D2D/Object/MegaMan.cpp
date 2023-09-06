@@ -38,8 +38,18 @@ void MegaMan::SetState(eState state)
 
 void MegaMan::SetFireState(eState state)
 {
+	shared_ptr<AnimationClip> pClip = m_pAnimation->GetCVAnimationClips()[m_nState];
+	UINT currentFrame = pClip->GetCurrentFrameNo();
 	m_nState = state;
-	m_pAnimation->SetPlay((UINT)m_nState);
+	m_pAnimation->SetPlay((UINT)m_nState, currentFrame);
+}
+
+void MegaMan::SetNormalState(eState state)
+{
+	shared_ptr<AnimationClip> pClip = m_pAnimation->GetCVAnimationClips()[m_nState];
+	UINT currentFrame = pClip->GetCurrentFrameNo();
+	m_nState = state;
+	m_pAnimation->SetPlay((UINT)m_nState, currentFrame);
 }
 
 void MegaMan::PreUpdate(Vector2& position)
@@ -48,11 +58,11 @@ void MegaMan::PreUpdate(Vector2& position)
 	{
 		if (KEYBOARD->Press(VK_LEFT))
 		{
-			if (m_nState != eState::LEFT_MOVE && !IsJumping() && !IsFalling() && !IsDashing())
+			if (m_nState != eState::LEFT_MOVE && !IsJumping() && !IsFalling() && !IsDashing() && m_FireStateTime == 0.0f)
 				SetState(eState::LEFT_MOVE);
 
-			if (m_nState == eState::LEFT_MOVE || m_nState == LEFT_JUMP 
-				|| m_nState == LEFT_FALL || m_nState == LEFT_DASH || m_nState == LEFT_NOJUMPFALL)
+			if (m_nState == eState::LEFT_MOVE || m_nState == LEFT_JUMP || m_nState == LEFT_FALL 
+				|| m_nState == LEFT_DASH || m_nState == LEFT_NOJUMPFALL || m_nState == LEFT_FIRE_MOVE)
 				position.x = position.x - m_SpeedX * TIME->Delta();
 
 			if (IsJumping() || IsFalling())
@@ -316,6 +326,20 @@ void MegaMan::PreUpdate(Vector2& position)
 				SetState(RIGHT_FALL);
 		}
 		break;
+
+	case LEFT_FIRE_MOVE:
+	case RIGHT_FIRE_MOVE:
+		m_FireStateTime += TIME->Delta();
+		if (m_FireStateTime >= 0.3f)
+		{
+			if (m_nState == LEFT_FIRE_MOVE)
+				SetNormalState(LEFT_MOVE);
+			else
+				SetNormalState(RIGHT_MOVE);
+			m_FireStateTime = 0.0f;
+		}
+		break;
+
 	}
 
 }
@@ -425,6 +449,16 @@ void MegaMan::FireBullet()
 	pBullet->SetDirection((UINT)(m_nState) % 2);
 	pBullet->SetScale(GetScale() * 1.1f);
 	m_cvBullets.push_back(pBullet);
+
+	if (IsMoving())
+	{
+		if (m_nState % 2 == 0)
+		{
+			SetFireState(LEFT_FIRE_MOVE);
+		}
+		else
+			SetFireState(RIGHT_FIRE_MOVE);
+	}
 }
 
 void MegaMan::Reset()
@@ -451,7 +485,14 @@ void MegaMan::PostRender()
 	strStatus.push_back(L"RIGHT_DASH");
 	strStatus.push_back(L"LEFT_NOJUMPFALL");
 	strStatus.push_back(L"RIGHT_NOJUMPFALL");
+	strStatus.push_back(L"LEFT_FIRE_MOVE");
+	strStatus.push_back(L"RIGHT_FIRE_MOVE");
 	strStatus.push_back(L"RIGHT_DASH");
+	strStatus.push_back(L"RIGHT_DASH");
+	strStatus.push_back(L"RIGHT_DASH");
+	strStatus.push_back(L"RIGHT_DASH");
+
+
 
 
 	DirectWrite::BeginDraw();
@@ -526,38 +567,14 @@ void MegaMan::CreateAnimation()
 
 	// LEFT_MOVE
 	{
-		strImage = L"./Textures/Megaman/Images/Object/x_move.bmp";
-	//	CreateClip(strImage, 128, 30+128*3, 14);
-		shared_ptr<AnimationClip> pClip = make_shared<AnimationClip>();
-		shared_ptr<Texture>       pTexture = m_pAnimation->GetTexture();
-		m_pAnimation->AddClip(pClip);
-
-		for (int i = 0; i < 14; i++)
-		{
-			int sx = 128 * i + 40;
-			int sy = 30 + 128*3;
-			int ex = sx + 50;
-			int ey = sy + 60;
-			pClip->AddFrame(pTexture, strImage, sx, sy, ex, ey, 0.06f);
-		}
+		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_LEFT.png";
+		CreateClip(strImage, 100, 420, 14, AnimationClip::Loop, 2, 0.06f);
 	}
 
 	// RIGHT_MOVE
 	{
-		strImage = L"./Textures/Megaman/Images/Object/x_move.bmp";
-	//	CreateClip(strImage, 128, 30+128*2, 14);
-		shared_ptr<AnimationClip> pClip = make_shared<AnimationClip>();
-		shared_ptr<Texture>       pTexture = m_pAnimation->GetTexture();
-		m_pAnimation->AddClip(pClip);
-
-		for (int i = 0; i < 14; i++)
-		{
-			int sx = 128 * i + 40;
-			int sy = 30 + 128*2;
-			int ex = sx + 50;
-			int ey = sy + 60;
-			pClip->AddFrame(pTexture, strImage, sx, sy, ex, ey, 0.06f);
-		}
+		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_RIGHT.png";
+		CreateClip(strImage, 100, 420, 14, AnimationClip::Loop, 2, 0.06f);
 	}
 
 	// LEFT_JUMP
@@ -630,9 +647,23 @@ void MegaMan::CreateAnimation()
 		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_RIGHT.png";
 		CreateClip(strImage, 100, 620, 1, AnimationClip::EndStay, 7);
 	}
+
+	// LEFT_FIRE_MOVE
+	{
+		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_LEFT.png";
+		CreateClip(strImage, 100, 520, 14, AnimationClip::Loop, 2, 0.06f);
+	}
+
+	// RIGHT_FIRE_MOVE
+	{
+		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_RIGHT.png";
+		CreateClip(strImage, 100, 520, 14, AnimationClip::Loop, 2, 0.06f);
+	}
+
+
 }
 
-void MegaMan::CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state, int start)
+void MegaMan::CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state, int start, float speed)
 {
 	shared_ptr<AnimationClip> pClip = make_shared<AnimationClip>(state);
 	shared_ptr<Texture>       pTexture = m_pAnimation->GetTexture();
@@ -644,7 +675,7 @@ void MegaMan::CreateClip(wstring strImage, int w, int h, int count, AnimationCli
 		int sy = h;
 		int ex = sx + 60;
 		int ey = sy + 60;
-		pClip->AddFrame(pTexture, strImage, sx, sy, ex, ey, 0.1f);
+		pClip->AddFrame(pTexture, strImage, sx, sy, ex, ey, speed);
 	}
 }
 
