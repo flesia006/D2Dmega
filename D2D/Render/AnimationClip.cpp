@@ -35,7 +35,7 @@ void AnimationClip::Update(Matrix V, Matrix P)
 			// 마지막 프레임까지 왔는가 Check
 			if (m_nCurrentFrame == m_cvFrames.size())
 			{
-				if		(m_State == eState::Once)
+				if	(m_State == eState::Once)
 				{
 					SetStop();
 					m_nCurrentFrame = 0;	// 맨 앞 frame 

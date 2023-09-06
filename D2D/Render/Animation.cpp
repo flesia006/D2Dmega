@@ -24,9 +24,9 @@ void Animation::Update(Matrix V, Matrix P)
 {
 	// 捞惑贸府
 	if (m_cvAnimationClips.size() == 0) return;
-	if (m_nCurrentClip >= m_cvAnimationClips.size()) return;
+	if (m_nAnimeState >= m_cvAnimationClips.size()) return;
 
-	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nCurrentClip];
+	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nAnimeState];
 	pClip->Update(V, P);
 }
 
@@ -34,9 +34,9 @@ void Animation::Render()
 {
 	// 捞惑贸府
 	if (m_cvAnimationClips.size() == 0) return;
-	if (m_nCurrentClip >= m_cvAnimationClips.size()) return;
+	if (m_nAnimeState >= m_cvAnimationClips.size()) return;
 
-	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nCurrentClip];
+	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nAnimeState];
 	pClip->Render();
 
 }
@@ -60,13 +60,14 @@ void Animation::SetPlay(UINT PlayNo)
 {
 	// 捞惑贸府
 	if (m_cvAnimationClips.size() == 0) return;
-	if (m_nCurrentClip >= m_cvAnimationClips.size()) return;
+	if (m_nAnimeState >= m_cvAnimationClips.size()) return;
 
-	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nCurrentClip];
+	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nAnimeState];
 
-	if (pClip->IsPlay() && PlayNo == m_nCurrentClip)
+	if (pClip->IsPlay() && PlayNo == m_nAnimeState)
 		return;
-	m_nCurrentClip = PlayNo;
+
+	m_nAnimeState = PlayNo;
 	pClip->SetPlay();
 
 }
@@ -75,9 +76,9 @@ void Animation::SetStop()
 {
 	// 捞惑贸府
 	if (m_cvAnimationClips.size() == 0) return;
-	if (m_nCurrentClip >= m_cvAnimationClips.size()) return;
+	if (m_nAnimeState >= m_cvAnimationClips.size()) return;
 
-	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nCurrentClip];
+	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nAnimeState];
 	pClip->SetStop();
 }
 
@@ -85,9 +86,9 @@ bool Animation::IsPlay()
 {
 	// 捞惑贸府
 	if (m_cvAnimationClips.size() == 0) return false;
-	if (m_nCurrentClip >= m_cvAnimationClips.size()) return false;
+	if (m_nAnimeState >= m_cvAnimationClips.size()) return false;
 
-	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nCurrentClip];
+	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nAnimeState];
 	return pClip->IsPlay();
 }
 

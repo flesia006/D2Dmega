@@ -33,13 +33,13 @@ public:				// getter
 	Vector2  GetScale()						{ return m_pTexture->GetScale(); }
 	Vector3  GetRotation()					{ return m_pTexture->GetRotation(); }
 	Vector2  GetTextureRealSize()			{ return m_pTexture->GetTextureRealSize(); }
-	UINT	 GetClipNo()					{ return m_nCurrentClip; }
+	UINT	 GetClipNo()					{ return m_nAnimeState; }
 
 
 private:
 	shared_ptr<class Texture> m_pTexture;	
 	vector<shared_ptr<class AnimationClip>> m_cvAnimationClips;
-	UINT m_nCurrentClip = 0;
+	UINT m_nAnimeState = 0;
 
 
 

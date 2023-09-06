@@ -51,6 +51,7 @@ public: // 가상함수
 private:
 	void   FireBullet();
 	void   SetState(eState state);
+	void   SetFireState(eState state);
 	void   PreUpdate(Vector2& position);
 	void   CreateAnimation();
 	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop, int start = 0);

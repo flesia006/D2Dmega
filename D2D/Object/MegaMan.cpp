@@ -36,6 +36,12 @@ void MegaMan::SetState(eState state)
 	m_pAnimation->SetPlay((UINT)m_nState);
 }
 
+void MegaMan::SetFireState(eState state)
+{
+	m_nState = state;
+	m_pAnimation->SetPlay((UINT)m_nState);
+}
+
 void MegaMan::PreUpdate(Vector2& position)
 {
 	// VK_LEFT
