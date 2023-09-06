@@ -36,8 +36,8 @@ private:
 	void     ShakingCamera(Vector2& position);
 
 private:
-	Texture*		m_pTexture ;
-	GameObject*		m_ptrObject;    // following Camear
+	Texture*		m_pTexture  = nullptr;
+	GameObject*		m_ptrObject = nullptr;    // following Camear
 	Matrix			m_Projection;
 	Matrix			m_View;
 	Vector2			m_Position     = Vector2(0.0f, 0.0f);

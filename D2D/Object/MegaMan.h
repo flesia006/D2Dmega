@@ -81,20 +81,27 @@ private:
 private:
 	eState m_nState = eState::LEFT_IDLE;
 	eState m_BeforeState = eState::LEFT_IDLE;
-	bool   m_bGround = false;
-	bool   m_bFalling = true;
+
+	// Megaman personal
 	float  m_SpeedX = 330.0f;
 	float  m_SpeedY = 8.0f;
 	float  m_Gravirty = 0.0f;
 	float  m_Angle = 0.0f;
 	float  m_dashDelay = 0.0f;
 	int    m_nHP   = 4;
+
+	// Timer
 	float  m_ChargeCountTime = 0.0f;
 	float  m_FallTime = 0.0f;
 	float  m_DashTime = 0.0f;
 	float  m_FireStateTime = 0.0f;
+
+	// State support
+	bool   m_bGround = false;
+	bool   m_bFalling = true;
 	bool   m_bCharge = false;
 	bool   m_bChargeFull = false;
 	bool   m_bDashJump = false;
+	bool   m_bFireState = false;
 };
 
