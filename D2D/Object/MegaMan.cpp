@@ -1,10 +1,14 @@
 #include "framework.h"
 #include "MegaMan.h"
-#include "./Collider/Collision.h"
-#include "./Scene/S01_Field.h"
-//#include "./Scene/S02_MoMoDora.h"
-#include "./Object/PlayerEffect.h"
+
+#include "Scene/S01_Field.h"
+
+#include "Object/PlayerEffect.h"
 #include "Object/Bullet.h"
+#include "Object/CopyMegaMan.h"
+
+#define  LOOK_L  m_nState %2  == 0 
+#define  LOOK_R  m_nState %2  == 1 
 
 MegaMan::MegaMan()
 {
@@ -21,6 +25,7 @@ MegaMan::MegaMan()
 	for (size_t i = 0; i < 6; i++)
 		m_cvEffects.push_back(new PlayerEffect());
 
+	m_pCopyMegaMan = new CopyMegaMan();
 
 }
 
@@ -34,22 +39,7 @@ void MegaMan::SetState(eState state)
 {
 	m_nState = state;
 	m_pAnimation->SetPlay((UINT)m_nState);
-}
-
-void MegaMan::SetFireState(eState state)
-{
-	shared_ptr<AnimationClip> pClip = m_pAnimation->GetCVAnimationClips()[m_nState];
-	UINT currentFrame = pClip->GetCurrentFrameNo();
-	m_nState = state;
-	m_pAnimation->SetPlay((UINT)m_nState, currentFrame);
-}
-
-void MegaMan::SetNormalState(eState state)
-{
-	shared_ptr<AnimationClip> pClip = m_pAnimation->GetCVAnimationClips()[m_nState];
-	UINT currentFrame = pClip->GetCurrentFrameNo();
-	m_nState = state;
-	m_pAnimation->SetPlay((UINT)m_nState, currentFrame);
+	m_pCopyMegaMan->SetState((CopyMegaMan::eState)state);
 }
 
 void MegaMan::PreUpdate(Vector2& position)
@@ -58,11 +48,10 @@ void MegaMan::PreUpdate(Vector2& position)
 	{
 		if (KEYBOARD->Press(VK_LEFT))
 		{
-			if (m_nState != eState::LEFT_MOVE && !IsJumping() && !IsFalling() && !IsDashing() && m_FireStateTime == 0.0f)
+			if (m_nState != eState::LEFT_MOVE && !IsJumping() && !IsFalling() && !IsDashing())
 				SetState(eState::LEFT_MOVE);
 
-			if (m_nState == eState::LEFT_MOVE || m_nState == LEFT_JUMP || m_nState == LEFT_FALL 
-				|| m_nState == LEFT_DASH || m_nState == LEFT_NOJUMPFALL || m_nState == LEFT_FIRE_MOVE)
+			if (LOOK_L)
 				position.x = position.x - m_SpeedX * TIME->Delta();
 
 			if (IsJumping() || IsFalling())
@@ -87,11 +76,11 @@ void MegaMan::PreUpdate(Vector2& position)
 	{
 		if (KEYBOARD->Press(VK_RIGHT))
 		{
+
 			if (m_nState != eState::RIGHT_MOVE && !IsJumping() && !IsFalling() && !IsDashing())
 				SetState(eState::RIGHT_MOVE);
 
-			if (m_nState == eState::RIGHT_MOVE || m_nState == RIGHT_JUMP 
-				|| m_nState == RIGHT_FALL || m_nState == RIGHT_DASH || m_nState == RIGHT_NOJUMPFALL)
+			if (LOOK_R)
 				position.x = position.x + m_SpeedX * TIME->Delta();
 
 			if (IsJumping() || IsFalling())
@@ -124,7 +113,7 @@ void MegaMan::PreUpdate(Vector2& position)
 				m_cvEffects[DASH_EFCT]->SetActive(true);
 				m_cvEffects[DASHDUST_EFCT]->SetActive(true);
 
-				if (m_nState % 2 == 0)
+				if (LOOK_L)
 				{
 					SetState(eState::LEFT_DASH);
 					m_cvEffects[DASHDUST_EFCT]->SetState(PlayerEffect::EFFECT_DASHDUST_L);
@@ -151,7 +140,7 @@ void MegaMan::PreUpdate(Vector2& position)
 					m_cvEffects[DASH_EFCT]->SetActive(false);
 					m_cvEffects[DASHDUST_EFCT]->SetActive(false);
 
-					if (m_nState % 2 == 0)
+					if (LOOK_L)
 						SetState(eState::LEFT_MOVE);
 					else
 						SetState(eState::RIGHT_MOVE);
@@ -160,7 +149,7 @@ void MegaMan::PreUpdate(Vector2& position)
 				}
 				else
 				{
-					if (m_nState % 2 == 0)
+					if (LOOK_L)
 						m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x + 90.0f, position.y - 35.0f));
 					else
 						m_cvEffects[DASH_EFCT]->SetPosition(Vector2(position.x - 90.0f, position.y - 35.0f));
@@ -170,13 +159,15 @@ void MegaMan::PreUpdate(Vector2& position)
 						SetNormalSpeed();
 						m_bDashJump = false;
 					}
+
+
 				}
 
 			}
 
 			if (KEYBOARD->Up('Z'))
 			{
-				if (m_nState % 2 == 0)
+				if (LOOK_L)
 					SetState(eState::LEFT_IDLE);
 				else SetState(eState::RIGHT_IDLE);
 				SetNormalSpeed();
@@ -202,7 +193,7 @@ void MegaMan::PreUpdate(Vector2& position)
 			m_bFalling = false;
 			m_Angle = VERTICAL;
 
-			if (m_nState % 2 == 0)
+			if (LOOK_L)
 				SetState(eState::LEFT_JUMP);
 			else SetState(eState::RIGHT_JUMP);
 			m_Gravirty = 0.0f;	
@@ -256,6 +247,7 @@ void MegaMan::PreUpdate(Vector2& position)
 
 			FireBullet();
 
+
 			m_pAnimation->GetTexture()->UpdateColorBuffer(0);
 			m_bCharge = m_bChargeFull = false;
 			m_ChargeCountTime = 0.0f;
@@ -268,7 +260,7 @@ void MegaMan::PreUpdate(Vector2& position)
 	// 1. ÃÊ±â, 2. Jumping, 3. Falling
 	if ((m_bGround == false) && (!(IsJumping())))
 	{
-		if (m_nState % 2 == 0)
+		if (LOOK_L)
 			SetState(LEFT_NOJUMPFALL);
 		else
 			SetState(RIGHT_NOJUMPFALL);
@@ -298,7 +290,7 @@ void MegaMan::PreUpdate(Vector2& position)
 	case RIGHT_JUMP:
 		if (m_bGround)
 		{
-			if (m_nState % 2 == 0)
+			if (LOOK_L)
 				SetState(LEFT_FALL);
 			else
 				SetState(RIGHT_FALL);
@@ -320,27 +312,24 @@ void MegaMan::PreUpdate(Vector2& position)
 	case RIGHT_NOJUMPFALL:
 		if (m_bGround)
 		{
-			if (m_nState % 2 == 0)
+			if (LOOK_L)
 				SetState(LEFT_FALL);
 			else
 				SetState(RIGHT_FALL);
 		}
 		break;
-
-	case LEFT_FIRE_MOVE:
-	case RIGHT_FIRE_MOVE:
-		m_FireStateTime += TIME->Delta();
-		if (m_FireStateTime >= 0.3f)
-		{
-			if (m_nState == LEFT_FIRE_MOVE)
-				SetNormalState(LEFT_MOVE);
-			else
-				SetNormalState(RIGHT_MOVE);
-			m_FireStateTime = 0.0f;
-		}
-		break;
-
 	}
+
+	// Fire Timer
+	if(m_bFireState)
+		m_FireStateTime += TIME->Delta();
+	
+	if (m_FireStateTime >= 0.25f)
+	{
+		m_FireStateTime = 0.0f;
+		m_bFireState = false;
+	}
+
 
 }
 
@@ -394,11 +383,19 @@ void MegaMan::Update(Matrix V, Matrix P)
 			p->Update(V, P);
 	}
 
+	// Fire Megaman
+	m_pCopyMegaMan->SetPosition(GetPosition());
+	m_pCopyMegaMan->SetScale(GetScale());
+	m_pCopyMegaMan->Update(V, P);
 }
 
 void MegaMan::Render()
 {
-	m_pAnimation->Render();
+	// MM
+	if(m_bFireState)
+		m_pCopyMegaMan->Render();
+	else
+		m_pAnimation->Render();
 	//m_pCollider->UpdateColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
 	//m_pCollider->Render();
 	//m_pFeet->Render();
@@ -416,14 +413,18 @@ void MegaMan::Render()
 		position.x = position.x + 30.0f;
 	}
 
+	// Bullet
 	for (auto& p : m_cvBullets)
 			p->Render();
 
+	// Effects
 	for (auto& p : m_cvEffects)
 	{
 		if (p->IsActive())
 			p->Render();
 	}
+
+
 }
 
 
@@ -450,15 +451,9 @@ void MegaMan::FireBullet()
 	pBullet->SetScale(GetScale() * 1.1f);
 	m_cvBullets.push_back(pBullet);
 
-	if (IsMoving())
-	{
-		if (m_nState % 2 == 0)
-		{
-			SetFireState(LEFT_FIRE_MOVE);
-		}
-		else
-			SetFireState(RIGHT_FIRE_MOVE);
-	}
+	m_bFireState = true;
+	m_FireStateTime = 0.0f;
+
 }
 
 void MegaMan::Reset()
@@ -648,17 +643,6 @@ void MegaMan::CreateAnimation()
 		CreateClip(strImage, 100, 620, 1, AnimationClip::EndStay, 7);
 	}
 
-	// LEFT_FIRE_MOVE
-	{
-		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_LEFT.png";
-		CreateClip(strImage, 100, 520, 14, AnimationClip::Loop, 2, 0.06f);
-	}
-
-	// RIGHT_FIRE_MOVE
-	{
-		strImage = L"./Textures/Megaman/MyResource/PLAYER/X_RIGHT.png";
-		CreateClip(strImage, 100, 520, 14, AnimationClip::Loop, 2, 0.06f);
-	}
 
 
 }
@@ -711,11 +695,11 @@ void MegaMan::WallCheck(Vector2& position)
 	{
 		if (Collision::HitTest(g, m_pWall))
 		{
-			if ((m_nState % 2 == 0) && (m_Position.x > g->GetPosition().x))
+			if ((LOOK_L) && (m_Position.x > g->GetPosition().x))
 			{
 				position.x = g->GetPosition().x + g->GetScale().x / 2 + m_pWall->GetScale().x / 2;
 			}
-			if ((m_nState % 2 == 1)	&& (m_Position.x < g->GetPosition().x))
+			if ((LOOK_R) && (m_Position.x < g->GetPosition().x))
 			{
 				position.x = g->GetPosition().x - g->GetScale().x / 2 - m_pWall->GetScale().x / 2;
 			}

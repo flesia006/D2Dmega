@@ -161,6 +161,7 @@
     <ClInclude Include="Object\Bullet.h" />
     <ClInclude Include="Object\Component.h" />
     <ClInclude Include="Object\Button.h" />
+    <ClInclude Include="Object\CopyMegaMan.h" />
     <ClInclude Include="Object\GameObject.h" />
     <ClInclude Include="Object\PlayerEffect.h" />
     <ClInclude Include="Object\MegaMan.h" />
@@ -202,6 +203,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Object\Bullet.cpp" />
+    <ClCompile Include="Object\CopyMegaMan.cpp" />
     <ClCompile Include="Object\GameObject.cpp" />
     <ClCompile Include="Object\Button.cpp" />
     <ClCompile Include="Object\PlayerEffect.cpp" />

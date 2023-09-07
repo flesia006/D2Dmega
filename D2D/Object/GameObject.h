@@ -1,4 +1,5 @@
 #pragma once
+class Collider;
 class GameObject
 {
 public:
@@ -34,7 +35,7 @@ public:		// Getter
 	Vector3					GetRotation()		{ return	m_Rotation; }
 	bool					IsActive()			{ return	m_bActive; }
 	string					GetObjectName()		{ return	m_strName; }
-	Collider* GetCollider() { return m_pCollider; }
+	class Collider* GetCollider() { return m_pCollider; }
 protected:
 	Vector2					m_Position			= Vector2(0.0f, 0.0f);
 	Vector2					m_Scale				= Vector2(1.0f, 1.0f);  // 0으로 하면 안됨

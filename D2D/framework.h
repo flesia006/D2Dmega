@@ -128,7 +128,7 @@ POINT->SetRotation(GetRotation());  \
 #include  "Base/Scene.h"
 #include  "Base/SceneManager.h"
 
-#include  "Collider/Collider.h"
+
 #include  "Object/GameObject.h"
 #include  "Object/ObjectManager.h"
 #include  "Object/Component.h"
@@ -144,6 +144,7 @@ POINT->SetRotation(GetRotation());  \
 #include  "Render/LineShader.h"
 
 #include  "Collider/Line.h"
+#include  "Collider/Collider.h"
 #include  "Collider/Collision.h"
 
 // DiectX의 Global변수 

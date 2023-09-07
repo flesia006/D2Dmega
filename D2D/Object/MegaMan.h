@@ -6,6 +6,7 @@
 
 class PlayerEffect;
 class Bullet;
+class CopyMegaMan;
 class MegaMan : public GameObject
 {
 public:
@@ -30,8 +31,6 @@ public:
 		RIGHT_DASH,
 		LEFT_NOJUMPFALL,
 		RIGHT_NOJUMPFALL,
-		LEFT_FIRE_MOVE,
-		RIGHT_FIRE_MOVE,
 	};
 
 	enum effects
@@ -53,8 +52,6 @@ public: // 가상함수
 private:
 	void   FireBullet();
 	void   SetState(eState state);
-	void   SetFireState(eState state);
-	void   SetNormalState(eState state);
 	void   PreUpdate(Vector2& position);
 	void   CreateAnimation();
 	void   CreateClip(wstring strImage, int w, int h, int count, AnimationClip::eState state = AnimationClip::eState::Loop, int start = 0, float speed = 0.1f);
@@ -77,6 +74,7 @@ private:
 	shared_ptr<class Texture>     m_pHPbar;
 	vector<PlayerEffect*> m_cvEffects;
 	vector<Bullet*> m_cvBullets;
+	class CopyMegaMan* m_pCopyMegaMan = nullptr;
 
 private:
 	eState m_nState = eState::LEFT_IDLE;
