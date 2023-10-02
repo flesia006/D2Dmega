@@ -61,5 +61,6 @@ float4 PS(PixelInput input) : SV_Target // 현재세팅된 메인렌더 타깃을 사용하라고
 	float4 color = sourc_texture[0].Sample(samp, input.uv);
     if (color.r == 1.0f && color.g == 0.0f && color.b == 1.0f)
         discard;
-	return color;
+	
+    return color;
 }

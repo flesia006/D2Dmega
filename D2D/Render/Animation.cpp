@@ -20,14 +20,14 @@ Animation::~Animation()
 
 }
 
-void Animation::Update(Matrix V, Matrix P)
+void Animation::Update()
 {
 	// 捞惑贸府
 	if (m_cvAnimationClips.size() == 0) return;
 	if (m_nAnimeState >= m_cvAnimationClips.size()) return;
 
 	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nAnimeState];
-	pClip->Update(V, P);
+	pClip->Update();
 }
 
 void Animation::Render()
@@ -56,7 +56,7 @@ void Animation::SetOffsetSize(float x, float y)
 	}
 }
 
-void Animation::SetPlay(UINT PlayNo, UINT currentFrame)
+void Animation::SetPlay(UINT PlayNo, UINT currentFrame, bool Reset)
 {
 	// 捞惑贸府
 	if (m_cvAnimationClips.size() == 0) return;
@@ -64,12 +64,20 @@ void Animation::SetPlay(UINT PlayNo, UINT currentFrame)
 
 	shared_ptr<AnimationClip> pClip = m_cvAnimationClips[m_nAnimeState];
 
-	if (pClip->IsPlay() && PlayNo == m_nAnimeState)
+	if (Reset)
+	{
+		m_nAnimeState = PlayNo;
+		pClip->SetPlay(currentFrame);
 		return;
+	}
+	else
+	{
+		if (pClip->IsPlay() && PlayNo == m_nAnimeState)
+			return;
 
-	m_nAnimeState = PlayNo;
-	pClip->SetPlay(currentFrame);
-
+		m_nAnimeState = PlayNo;
+		pClip->SetPlay(currentFrame);
+	}
 }
 
 void Animation::SetStop()

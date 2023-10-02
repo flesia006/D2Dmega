@@ -16,11 +16,9 @@ void ObjectManager::Update(string name)
 {
 	GameObject* pObject = FindObject(name);
 	if (!pObject) return;
-	Matrix V = CAMERA->GetView();
-	Matrix P = CAMERA->GetProjection();
 
-	pObject->Update(V, P);
-
+	pObject->Update();
+	
 }
 
 void ObjectManager::Render(string name)

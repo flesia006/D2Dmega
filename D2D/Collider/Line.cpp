@@ -4,29 +4,30 @@
 
 Line::Line()
 {
-	m_pShader = make_shared<LineShader>(L"./Shader/Color.hlsl");
+	m_pShader = new LineShader(L"./Shader/Color.hlsl");
 }
 
 Line::~Line()
 {
+	SAFE_DELETE(m_pShader);
+	ClearLine();
 }
 void Line::AddLine(float x1, float y1, float x2, float y2)
 {
-	shared_ptr<Vector2> p = make_shared<Vector2>(x1, y1);
-	m_cvLines.push_back(p);
-
-	p = make_shared<Vector2>(x2, y2);
-	m_cvLines.push_back(p);
+	Vector2 p1 = Vector2(x1, y1);
+	Vector2 p2 = Vector2(x2, y2);
+	m_cvLines.push_back(make_pair(p1, p2));
 }
 void Line::ClearLine()
 {
-
+	SAFE_RELEASE(m_pVertexBuffer);
+	m_cvLines.erase(m_cvLines.begin(), m_cvLines.end());
 }
-void Line::Update(Matrix V, Matrix P)
+void Line::Update()
 {
 	if (m_cvLines.size() == 0)
 		return;
-	
+
 	Matrix W, T, S;
 
 	D3DXMatrixTranslation(&T, 0.0f, 0.0f, 0.0f);
@@ -35,9 +36,11 @@ void Line::Update(Matrix V, Matrix P)
 
 	W = S * T;
 
-//	D3DXMatrixIdentity(&W);
+	
+
+	//	D3DXMatrixIdentity(&W);
 	m_pShader->UpdateColorBuffer(Color(0.0f, 1.0f, 0.0f, 1.0f));
-	m_pShader->Update(W, V, P);
+	m_pShader->Update(W, CAMERA->GetView(), CAMERA->GetProjection());
 
 }
 
@@ -61,7 +64,7 @@ void Line::Render()
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	// VS _OM단계
-	m_pShader->Draw(m_cvLines.size(), 0);
+	m_pShader->Draw(m_cvLines.size() * 2, 0);
 }
 
 void Line::CreateVertexBuffer()
@@ -72,14 +75,16 @@ void Line::CreateVertexBuffer()
 	if (m_pVertexBuffer)
 		SAFE_RELEASE(m_pVertexBuffer);
 
-	Vertex* vertices = new Vertex[m_cvLines.size()];
+	Vertex* vertices = new Vertex[4];
 
-	for (UINT i = 0; i < m_cvLines.size(); i++)
-	{
-		shared_ptr<Vector2> p = m_cvLines[i];
-		vertices[i].Position = Vector3(p->x, p->y, 0.0f);
-		vertices[i].Color = Color(1.0f, 1.0f, 0.0f, 0.0f);
-	}
+	vertices[0].Position = Vector3(m_cvLines[0].first.x, m_cvLines[0].first.y, 0.0f);
+	vertices[0].Color = Color(1.0f, 1.0f, 0.0f, 0.0f);
+	vertices[1].Position = Vector3(m_cvLines[0].second.x, m_cvLines[0].second.y, 0.0f);
+	vertices[1].Color = Color(1.0f, 1.0f, 0.0f, 0.0f);
+	vertices[2].Position = Vector3(m_cvLines[1].first.x, m_cvLines[1].first.y, 0.0f);
+	vertices[2].Color = Color(1.0f, 1.0f, 0.0f, 0.0f);
+	vertices[3].Position = Vector3(m_cvLines[1].second.x, m_cvLines[1].second.y, 0.0f);
+	vertices[3].Color = Color(1.0f, 1.0f, 0.0f, 0.0f);
 
 	// 위에 선언된 데이터를 VertextBuffer에 Setting
 	// DX에서 Craete,Get()를 사용할때 변수명칭 앞에 "I"자가 있으면
@@ -89,7 +94,7 @@ void Line::CreateVertexBuffer()
 		ZeroMemory(&desc, sizeof(desc));              // 변수가 0로 초기화
 		desc.Usage = D3D11_USAGE_DYNAMIC;             // *생성한후에 변경할수  한다
 		desc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE; // *생성한후에 변경할수  한다
-		desc.ByteWidth = sizeof(Vertex) * m_cvLines.size();              // Vector3,Color ( 3*4 + 4*4)
+		desc.ByteWidth = sizeof(Vertex) * 3;              // Vector3,Color ( 3*4 + 4*4)
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;    // 12 +16 = 28
 
 		//* D3D11_BIND_VERTEX_BUFFER = 0x1L,     정점
@@ -115,19 +120,7 @@ void Line::EndLine()
 
 int Line::GetLineCount()
 {
-	return (int)(m_cvLines.size()/2);
-}
-
-Vector2 Line::GetStartPoint(int no)
-{
-	Vector2 pos = Vector2(m_cvLines[no * 2]->x, m_cvLines[no * 2]->y);
-	return  pos;
-}
-
-Vector2 Line::GetEndPoint(int no)
-{
-	Vector2 pos = Vector2(m_cvLines[no * 2+1]->x, m_cvLines[no * 2 +1]->y);
-	return  pos;
+	return (int)(m_cvLines.size() / 2);
 }
 
 bool Line::LoadLine(string filename)

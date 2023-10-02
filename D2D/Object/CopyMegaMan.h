@@ -20,6 +20,13 @@ public:
 		RIGHT_DASH,
 		LEFT_NOJUMPFALL,
 		RIGHT_NOJUMPFALL,
+
+		LEFT_ATTACKED,
+		RIGHT_ATTACKED,
+		LEFT_HEAVYATTACKED,
+		RIGHT_HEAVYATTACKED,
+		LEFT_RETURN, 
+		RIGHT_RETURN
 	};
 
 public:
@@ -27,11 +34,11 @@ public:
 	~CopyMegaMan();
 
 public: // 가상함수
-	void Update(Matrix V, Matrix P) override;
+	void Update() override;
 	void Render() override;
 	void Reset() {};
 	void PostRender() {};
-	void SetState(eState state);
+	void SetState(eState state, bool reset = false);
 
 private:
 	bool IsPlay() { return m_pAnimation->IsPlay(); }

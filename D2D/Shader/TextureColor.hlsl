@@ -109,5 +109,8 @@ float4 PS(PixellInput input) : SV_Target // 현재세팅된 메인렌더 타깃을 사용하라�
 
 			break;
 	}
+    if (returnColor.r == 1.0f && returnColor.g == 0.0f && returnColor.b == 1.0f)
+        discard;
+	
 	return returnColor;
 }

@@ -18,6 +18,7 @@ public:
 private:
 	void  ThreadStart();
 	void  CreateObjects();
+	void  CreateSound();
 private:
 	vector<shared_ptr<Scene>>   m_cvScenes;
 	shared_ptr<Scene>			m_pCurrentScene;

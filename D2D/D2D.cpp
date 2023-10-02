@@ -18,7 +18,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance,      // OS에서 생성된 Instance H
 {
   
     // Game에 대한 root class
-   MAIN->CreateInstance(hInstance, 1280, 960);
+   MAIN->CreateInstance(hInstance, 1323, 744);
  //   MAIN->CreateInstance(hInstance, 500, 500);
     // Scene Manager 생성
 
@@ -46,7 +46,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance,      // OS에서 생성된 Instance H
         else
         {
             //Timer
-            TIME->Update(120.0f);       // 120Frame;
+            TIME->Update(60.0f);       // 120Frame;
             Mouse->Update();
             MAIN->Update(); //  충돌, 키보드/마우스에 대한 위치변경
             MAIN->Render(); //  Rendering

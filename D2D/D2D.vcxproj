@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{7495aaa8-ddbe-4e79-8cb0-ff2c9ae21af4}</ProjectGuid>
     <RootNamespace>D2D</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -71,20 +71,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH);</IncludePath>
-    <LibraryPath>$(DL);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH);C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\inc</IncludePath>
+    <LibraryPath>$(DL);C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH);</IncludePath>
-    <LibraryPath>$(DL);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH);C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\inc</IncludePath>
+    <LibraryPath>$(DL);C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH);</IncludePath>
-    <LibraryPath>$(DL);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH);C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\inc</IncludePath>
+    <LibraryPath>$(DL);C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH);</IncludePath>
-    <LibraryPath>$(DL);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH);C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\inc</IncludePath>
+    <LibraryPath>$(DL);C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>false</VcpkgEnableManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -92,13 +95,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -109,15 +114,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -126,13 +133,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,29 +152,37 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Collider\Collider.h" />
     <ClInclude Include="Collider\Line.h" />
     <ClInclude Include="Collider\Collision.h" />
+    <ClInclude Include="Object\Boss.h" />
+    <ClInclude Include="Object\BossBullet.h" />
+    <ClInclude Include="Object\BossEffect.h" />
     <ClInclude Include="Object\Bullet.h" />
+    <ClInclude Include="Object\ChargeEffect.h" />
     <ClInclude Include="Object\Component.h" />
-    <ClInclude Include="Object\Button.h" />
     <ClInclude Include="Object\CopyMegaMan.h" />
+    <ClInclude Include="Object\DashMegaMan.h" />
     <ClInclude Include="Object\GameObject.h" />
+    <ClInclude Include="Object\GrenadeMan.h" />
     <ClInclude Include="Object\PlayerEffect.h" />
     <ClInclude Include="Object\MegaMan.h" />
     <ClInclude Include="Object\ObjectManager.h" />
+    <ClInclude Include="Object\Spike.h" />
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Animation.h" />
     <ClInclude Include="Render\AnimationClip.h" />
@@ -179,18 +196,15 @@
     <ClInclude Include="Base\SceneManager.h" />
     <ClInclude Include="Scene\S01_Field.h" />
     <ClInclude Include="Render\SRVManager.h" />
-    <ClInclude Include="System\Audio.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="System\GameTime.h" />
     <ClInclude Include="System\Keyboard.h" />
     <ClInclude Include="System\Mouse.h" />
+    <ClInclude Include="System\Sound.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\Texture.h" />
     <ClInclude Include="Render\TextureShader.h" />
+    <ClInclude Include="Utilities\Path.h" />
+    <ClInclude Include="Utilities\String.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Collider\Collider.cpp" />
@@ -202,13 +216,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Object\Boss.cpp" />
+    <ClCompile Include="Object\BossBullet.cpp" />
+    <ClCompile Include="Object\BossEffect.cpp" />
     <ClCompile Include="Object\Bullet.cpp" />
+    <ClCompile Include="Object\ChargeEffect.cpp" />
     <ClCompile Include="Object\CopyMegaMan.cpp" />
+    <ClCompile Include="Object\DashMegaMan.cpp" />
     <ClCompile Include="Object\GameObject.cpp" />
-    <ClCompile Include="Object\Button.cpp" />
+    <ClCompile Include="Object\GrenadeMan.cpp" />
     <ClCompile Include="Object\PlayerEffect.cpp" />
     <ClCompile Include="Object\MegaMan.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
+    <ClCompile Include="Object\Spike.cpp" />
     <ClCompile Include="Render\Camera.cpp" />
     <ClCompile Include="Render\Animation.cpp" />
     <ClCompile Include="Render\AnimationClip.cpp" />
@@ -222,15 +242,12 @@
     <ClCompile Include="Render\Texture.cpp" />
     <ClCompile Include="Render\TextureShader.cpp" />
     <ClCompile Include="Render\SRVManager.cpp" />
-    <ClCompile Include="System\Audio.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="System\GameTime.cpp" />
     <ClCompile Include="System\Keyboard.cpp" />
     <ClCompile Include="System\Mouse.cpp" />
+    <ClCompile Include="System\Sound.cpp" />
+    <ClCompile Include="Utilities\Path.cpp" />
+    <ClCompile Include="Utilities\String.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="D2D.rc" />

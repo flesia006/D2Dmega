@@ -12,7 +12,8 @@
 #pragma warning (disable: 4467) 
 #pragma warning (disable: 4244) 
 #pragma warning (disable: 4267) 
-#pragma warning (disable: 4018) 
+#pragma warning (disable: 4018)
+#pragma warning (disable: 26495)
 
 
 
@@ -41,6 +42,7 @@
 #include  <bitset>
 #include  <functional>    // function을 포인터 변수
 #include  <mutex>
+#include  <random>
 using namespace std;
 
 ////////////////////////////////////////////////////////////////
@@ -62,11 +64,17 @@ using namespace std;
 ///////////////////////////////////////////////////////
 
 
+//FMODE
+#include "Lib/FMOD/fmod.hpp"
+#ifdef _M_X64
+#pragma comment(lib, "Lib/FMOD/x64/fmodL_vc.lib")
+#elif _M_IX86
+#pragma comment(lib, "Lib/FMOD/x86/fmodL_vc.lib")
+#endif
+
 #include  <d3d11.h>          // 11.0
 #include  <D3DX11.h>         // 10.0
 #include  <D3DX10.h>         // Matrix관련 Util
-//#include  <D3DX10math.h>
-//#include  <d3dx11effect.h> // 32Bit용  --> 64Bit
 #include   <D3Dcompiler.h>   // HLSL,FX 세이더파일 컴파일
 
 #pragma  comment(lib,"d3d11.lib")  // #pragma --> 지시기
@@ -114,10 +122,11 @@ static CLASS_NAME* Get()											 \
 	return &instance;												 \
 }
 
-#define SET(POINT)					\
+#define UPDATE(POINT)				\
 POINT->SetPosition(GetPosition());  \
 POINT->SetScale(GetScale());	    \
 POINT->SetRotation(GetRotation());  \
+POINT->Update();					\
 
 
 
@@ -125,14 +134,17 @@ POINT->SetRotation(GetRotation());  \
 #include  "System/GameTime.h"
 #include  "System/Keyboard.h"			// IMGUI
 #include  "System/Mouse.h"				// IMGUI
+#include  "System/Sound.h"
+
 #include  "Base/Scene.h"
 #include  "Base/SceneManager.h"
 
+#include  "Utilities/Path.h"
+#include  "Utilities/String.h"
 
 #include  "Object/GameObject.h"
 #include  "Object/ObjectManager.h"
 #include  "Object/Component.h"
-
 
 #include  "MainWidow.h"
 #include  "Render/SRVManager.h"

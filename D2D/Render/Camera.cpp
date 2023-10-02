@@ -1,5 +1,6 @@
 #include "framework.h"
 #include "Camera.h"
+#include "Object/MegaMan.h"
 
 Camera::Camera()
 {
@@ -40,11 +41,14 @@ Camera::Camera()
 void Camera::FollowingCamera(Vector2 & position)
 {
 	position = m_ptrObject->GetPosition();
-	position = position + m_Offset;
 
 }
 void Camera::ShakingCamera(Vector2 & position)
 {
+}
+void Camera::MoveCamera(Vector2& position)
+{
+
 }
 Camera::~Camera()
 {
@@ -53,10 +57,33 @@ Camera::~Camera()
 void Camera::Update()
 {
 	Vector2   position = GetPosition();
+	MegaMan* pMM = nullptr;
 
+	if (m_ptrObject)
+		pMM = dynamic_cast<class MegaMan*>(m_ptrObject);
 
-	if(m_ptrObject)
-		FollowingCamera(position);
+	if (pMM->IsTouchBossRoom() && !m_MovingCamera)
+	{
+		SOUND->Stop("bgm");
+		m_DoorOpen += DELTA;
+		if (m_DoorOpen >= 0.65f)
+		{
+			m_MovingCamera = true;
+			SetCornerRight(Vector2(6680 - MAIN->GetWidth() * 0.5f, 0.0f));
+		}
+	}
+
+	if (m_ptrObject)
+	{		
+		if (!m_MovingCamera)
+		{
+			FollowingCamera(position);
+		}
+		else
+		{
+			position.x += 700.0f * DELTA;
+		}
+	}
 
 
 	// CAMERA มฆวั
@@ -66,7 +93,10 @@ void Camera::Update()
 		if (position.x < m_CornerLeft.x)
 			position.x = m_CornerLeft.x;
 		if (position.x > m_CornerRight.x)
+		{
 			position.x = m_CornerRight.x;
+
+		}
 
 		if (position.y < m_CornerLeft.y)
 			position.y = m_CornerLeft.y;
@@ -89,10 +119,6 @@ void Camera::Update()
 
 	D3DXMatrixLookAtLH(&V, &eye, &temp, &up);
 	m_View = V;
-
-
-
-
 }
 
 void Camera::Update(Matrix V, Matrix P)
@@ -125,6 +151,25 @@ void Camera::VCtoWC(Vector2& position)
 		          MAIN->GetHeight() * 0.5f, 0.0f);
 	W = vp * S * T;
 	D3DXVec2TransformCoord(&position, &position, &W);
+}
+
+bool Camera::IsCornerLeft(Vector2 pos)
+{
+
+	if (pos.x >= m_CornerLeft.x && 
+		pos.x < m_CornerLeft.x + (m_CornerRight.x - m_CornerLeft.x) / 3)
+		return true;
+	else
+		return false;
+}
+
+bool Camera::IsCornerRight(Vector2 pos)
+{
+	if (pos.x < m_CornerRight.x && 
+		pos.x < m_CornerLeft.x + ((m_CornerRight.x - m_CornerLeft.x) / 3) * 2)
+		return true;
+	else
+		return false;
 }
 
 

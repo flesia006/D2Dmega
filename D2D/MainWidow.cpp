@@ -112,6 +112,17 @@ void MainWidow::CreateInstance(HINSTANCE hInstance, int width, int height)
 
         m_nWidth  = rect.right - rect.left;
         m_nHeight = rect.bottom - rect.top;
+
+//		UINT centerX = (GetSystemMetrics(SM_CXSCREEN) - m_nWidth) / 2;
+//		UINT centerY = (GetSystemMetrics(SM_CYSCREEN) - m_nHeight) / 2;
+//
+//		MoveWindow
+//		(
+//			m_hWnd
+//			, centerX, centerY
+//			, m_nWidth, m_nHeight
+//			, true
+//		);
 	
 		// Direct X11ÃÊ±âÈ­
 		this->Init3D();

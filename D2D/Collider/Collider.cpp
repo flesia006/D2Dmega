@@ -4,6 +4,7 @@
 
 Collider::Collider()
 {
+	SetActive(true);
 	m_pShader = make_shared<LineShader>(L"./Shader/Color.hlsl");
 	CreateVertexBuffer();
 }
@@ -11,6 +12,7 @@ Collider::Collider()
 Collider::Collider(Vector2 LT, Vector2 RB, Vector3 rot)
 	: m_Rotation(rot)
 {
+	SetActive(true);
 	m_Scale = Vector2(RB.x - LT.x, LT.y - RB.y);
 	m_Position = Vector2((RB.x + LT.x) / 2, (LT.y + RB.y) / 2);
 
@@ -21,6 +23,7 @@ Collider::Collider(Vector2 LT, Vector2 RB, Vector3 rot)
 Collider::Collider(Vector2 scale, Vector2 position, int dummy)
 	: m_Scale(scale), m_Position(position), m_type(dummy)
 {
+	SetActive(true);
 	m_pShader = make_shared<LineShader>(L"./Shader/Color.hlsl");
 	CreateVertexBuffer();
 }
@@ -31,9 +34,13 @@ Collider::~Collider()
 	SAFE_RELEASE(m_pVertexBuffer);
 }
 
-void Collider::Update(Matrix V, Matrix P)
+void Collider::Update()
 {
+	if (!IsActive())
+		return;
 	Matrix W, T, S, R;
+	Matrix V = CAMERA->GetView();
+	Matrix P = CAMERA->GetProjection();
 
 	D3DXMatrixTranslation(&T, GetPosition().x, GetPosition().y, 0.0f);
 	D3DXMatrixScaling(&S, GetScale().x, GetScale().y, 0.0f);
@@ -51,6 +58,7 @@ void Collider::Update(Matrix V, Matrix P)
 
 void Collider::UpdateColor(Color color)
 {
+
 	m_Color = color;
 	m_pShader->UpdateColorBuffer(m_Color);
 
@@ -58,6 +66,8 @@ void Collider::UpdateColor(Color color)
 
 void Collider::Render()
 {
+	if (!IsActive())
+		return;
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 

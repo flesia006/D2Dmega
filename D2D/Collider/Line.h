@@ -5,7 +5,7 @@ public:
 	Line();
 	~Line();
 public:
-	void			Update(Matrix V, Matrix P);
+	void			Update();
 	void			Render();
 
 
@@ -18,8 +18,9 @@ public:
 	void			ClearLine();
 	void			EndLine();
 	int				GetLineCount();
-	Vector2			GetStartPoint(int no);
-	Vector2			GetEndPoint(int no);
+	vector<pair<Vector2, Vector2>> GetLine() {return m_cvLines;	}
+//	Vector2			GetStartPoint(int no);
+//	Vector2			GetEndPoint(int no);
 
 private:
 	struct Vertex
@@ -27,8 +28,8 @@ private:
 		Vector3 Position;
 		Color   Color;
 	};
-	vector<shared_ptr<Vector2>>    m_cvLines;  // (0,1) Line, (2,3)
-	shared_ptr<LineShader>		   m_pShader;
+	vector<pair<Vector2, Vector2>> m_cvLines;
+	class LineShader* m_pShader = nullptr;
 	ID3D11Buffer*				   m_pVertexBuffer = nullptr;
 };
 

@@ -23,6 +23,7 @@ LineShader::~LineShader()
 
 void LineShader::Update(Matrix W, Matrix V, Matrix P)
 {
+
 	TRANSFORM_DATA  temp;
 	// 전치행렬로 변환
 	D3DXMatrixTranspose(&temp.Projection, &P);

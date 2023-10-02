@@ -17,7 +17,7 @@ AnimationClip::~AnimationClip()
 }
 
 
-void AnimationClip::Update(Matrix V, Matrix P)
+void AnimationClip::Update()
 {
 	// 이상 처리
 	if (m_cvFrames.size() == 0)	return;
@@ -59,7 +59,7 @@ void AnimationClip::Update(Matrix V, Matrix P)
 	m_ptrTexture->SetImageFile(pFrame->m_strImageFile);
 	m_ptrTexture->SetOffset(pFrame->m_Offset);
 	m_ptrTexture->SetOffsetSize(pFrame->m_OffsetSize);
-	m_ptrTexture->Update(V, P);
+	m_ptrTexture->Update();
 }
 
 void AnimationClip::Render()

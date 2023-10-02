@@ -3,15 +3,16 @@
 #include "Render/TextureShader.h"
 #define  PI  3.141592f
 
-Texture::Texture(wstring strImage, wstring strShader)
+Texture::Texture(wstring strImage, wstring strShader, UINT Mode)
 {
-	m_pShader      = new TextureShader(strShader);
+	m_pShader = new TextureShader(strShader);
 	m_strImageFile = strImage;
 
 	m_ptrSRV = SRVMANAGER->CreateShaderResourceView(strImage);
 	Vector2  size = SRVMANAGER->FindSpriteSize(strImage);
 	m_ImageSize = size;
 	CreateVertexBuffer(0.0f, 0.0f, size.x, size.y);
+	TextureMode = Mode;
 }
 
 Texture::Texture(wstring strImage, wstring strShader, int startX, int startY, int endX, int endY)
@@ -24,7 +25,7 @@ Texture::Texture(wstring strImage, wstring strShader, int startX, int startY, in
 	m_ptrSRV = SRVMANAGER->CreateShaderResourceView(strImage);
 	Vector2  size = SRVMANAGER->FindSpriteSize(strImage);
 	m_ImageSize = size;
-	CreateVertexBuffer((float)startX, (float)startY, (float)endX, (float) endY);
+	CreateVertexBuffer((float)startX, (float)startY, (float)endX, (float)endY);
 
 }
 
@@ -39,9 +40,11 @@ Texture::~Texture()
 //  3. UV 바꾸는 작업
 //  4. Shader W,V,P Update
 //////////////////////////////////////////////////////
-void Texture::Update(Matrix V, Matrix P)
+void Texture::Update()
 {
 	Matrix W, T, S, R;
+	Matrix V = CAMERA->GetView();
+	Matrix P = CAMERA->GetProjection();
 
 	// x,y,z위 배경
 	D3DXMatrixTranslation(&T, m_Position.x, m_Position.y, 0.0f);
@@ -54,7 +57,7 @@ void Texture::Update(Matrix V, Matrix P)
 		m_Rotation.y * PI / 180.0f, m_Rotation.x * PI / 180.0f,
 		m_Rotation.z * PI / 180.0f);
 
-	W = S * R * T;  
+	W = S * R * T;
 
 	// Shader를 가져오기
 	m_ptrSRV = SRVMANAGER->FindShaderResourceView(m_strImageFile);
@@ -91,19 +94,31 @@ void Texture::UpdateBlock()
 	Vertex  vertices[6];
 
 	// TODO : index로 할수 있게끔
+	if (TextureMode == 0)
+	{
+		vertices[0].Position = Vector3(-0.5f, -0.5f, 0.0f); // 0
+		vertices[1].Position = Vector3(-0.5f, +0.5f, 0.0f); // 1
+		vertices[2].Position = Vector3(+0.5f, -0.5f, 0.0f); // 3
+		vertices[3].Position = Vector3(+0.5f, -0.5f, 0.0f); // 3
+		vertices[4].Position = Vector3(-0.5f, +0.5f, 0.0f); // 1
+		vertices[5].Position = Vector3(+0.5f, +0.5f, 0.0f); // 2
+	}
+	else if (TextureMode == 1)
+	{
+		vertices[0].Position = Vector3(-0.5f, +0.0f, 0.0f); // 0
+		vertices[1].Position = Vector3(-0.5f, +1.0f, 0.0f); // 1
+		vertices[2].Position = Vector3(+0.5f, -0.0f, 0.0f); // 3
+		vertices[3].Position = Vector3(+0.5f, -0.0f, 0.0f); // 3
+		vertices[4].Position = Vector3(-0.5f, +1.0f, 0.0f); // 1
+		vertices[5].Position = Vector3(+0.5f, +1.0f, 0.0f); // 2
+	}
 
-	vertices[0].Position = Vector3(-0.5f, -0.5f, 0.0f); // 0
-	vertices[1].Position = Vector3(-0.5f, +0.5f, 0.0f); // 1
-	vertices[2].Position = Vector3(+0.5f, -0.5f, 0.0f); // 3
-	vertices[3].Position = Vector3(+0.5f, -0.5f, 0.0f); // 3
-	vertices[4].Position = Vector3(-0.5f, +0.5f, 0.0f); // 1
-	vertices[5].Position = Vector3(+0.5f, +0.5f, 0.0f); // 2
 
 	// 비율계산 -> NCD
 	float  startX = m_SpriteOffset.x / m_ImageSize.x;
 	float  startY = m_SpriteOffset.y / m_ImageSize.y;
-	float  endX   = (m_SpriteOffset.x +m_SpriteSize.x ) / m_ImageSize.x;
-	float  endY   = (m_SpriteOffset.y + m_SpriteSize.y) / m_ImageSize.y;
+	float  endX = (m_SpriteOffset.x + m_SpriteSize.x) / m_ImageSize.x;
+	float  endY = (m_SpriteOffset.y + m_SpriteSize.y) / m_ImageSize.y;
 
 	// UV값   :  (uv)x,y,z
 	// u  --> bitmap x방향 ( 우측방향이 증가)
@@ -122,7 +137,7 @@ void Texture::UpdateBlock()
 
 		DeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
 		{
-			memcpy(subResource.pData, vertices, sizeof(Vertex)*6);
+			memcpy(subResource.pData, vertices, sizeof(Vertex) * 6);
 		}
 		DeviceContext->Unmap(m_pVertexBuffer, 0);
 	}
@@ -183,15 +198,15 @@ void Texture::CreateVertexBuffer(float startX, float startY, float endX, float e
 	vertices[5].Position = Vector3(+0.5f, +0.5f, 0.0f); // 2
 
 	Vector2 size = SRVMANAGER->FindSpriteSize(m_strImageFile);
-	m_SpriteOffset  = Vector2(startX, startY);
-	m_SpriteSize = Vector2(endX-startX, endY-startY);
+	m_SpriteOffset = Vector2(startX, startY);
+	m_SpriteSize = Vector2(endX - startX, endY - startY);
 
 	// UV값  NCD좌표로 변환 : 800 -> 1.0f, 20/800->0.16f
 
 	startX = startX / size.x;
 	startY = startY / size.y;
-	endX   = endX   / size.x;
-	endY   = endY   / size.y;
+	endX = endX / size.x;
+	endY = endY / size.y;
 
 	// UV값   :  (uv)x,y,z
 	// u  --> bitmap x방향 ( 우측방향이 증가)

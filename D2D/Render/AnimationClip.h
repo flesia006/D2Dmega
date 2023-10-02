@@ -14,7 +14,7 @@ public:
 		End,        // AttackÈÄ last image wait
 		EndStay
 	};
-	void  Update(Matrix V, Matrix P);
+	void  Update();
 	void  Render();
 
 public:

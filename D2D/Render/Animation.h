@@ -8,7 +8,7 @@ public:
 	~Animation();
 
 public:
-	void Update(Matrix V, Matrix P);
+	void Update();
 	void Render();
 
 public:				
@@ -23,7 +23,7 @@ public:
 	void SetRotation(float x, float y, float z) { m_pTexture->SetRotation(x, y, z); }
 	void SetOffsetSize(float x, float y);
 
-	void SetPlay(UINT PlayNo, UINT currentFrame = 0);
+	void SetPlay(UINT PlayNo, UINT currentFrame = 0, bool Reset = false);
 	void SetStop();
 
 public:				// getter

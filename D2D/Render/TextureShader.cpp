@@ -296,7 +296,7 @@ void TextureShader::CreateSamplerState()
 		// WRAP   : 원본픽세로 나머지 부분을 채운다
 		// CLAMP  : 맨마지막 픽셀로 채운다
 		// MIRROR : 인접한 픽셀로 반전시켜 채운다
-		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		desc.Filter = D3D11_FILTER_MAXIMUM_MIN_MAG_MIP_POINT;
 		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;

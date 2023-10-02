@@ -1,5 +1,6 @@
 #pragma once
 #define  TIME  GameTime::GetInstance()
+#define  DELTA GameTime::GetInstance()->Delta()
 
 class GameTime
 {

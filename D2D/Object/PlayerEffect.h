@@ -12,6 +12,15 @@ public:
 		EFFECT_DASH_R,
 		EFFECT_DASHDUST_L,
 		EFFECT_DASHDUST_R,
+		EFFECT_WALL_L,
+		EFFECT_WALL_R,
+		EFFECT_WALLKICK_L,
+		EFFECT_WALLKICK_R,
+		EXPLOSION, 
+		ENEMYHIT, 
+		ENEMYBOMB,
+		ENEMYBLOCK,
+		ENEMYHIT2,
 	};
 
 	PlayerEffect();
@@ -23,9 +32,9 @@ public:
 	void SetCallback(function<void()> cbFunction) { m_fpEndCallback = cbFunction; }
 
 public: // 가상함수
-	void Update(Matrix V, Matrix P) override;    // 순수 가상 함수
+	void Update() override;    // 순수 가상 함수
 	void Render() override;                     // 순수 가상 함수
-	void Reset() {};
+	void Reset() override;
 	void PostRender() {};
 
 private:

@@ -81,6 +81,14 @@ bool Collision::LineInterscetion(Vector2 AP1, Vector2 AP2, Vector2 BP1, Vector2 
 
 	return true;
 }
+bool Collision::LineInterscetion(Collider* A, Vector2 BP1, Vector2 BP2, Vector2& result)
+{
+	Vector2 AP1 = A->GetPosition();
+	Vector2 AP2 = Vector2(AP1.x, AP1.y - A->GetScale().y / 2);
+	bool b = false;
+	b =  LineInterscetion(AP1, AP2, BP1, BP2, result);
+	return b;
+}
 // 면적이 양수면 시계 반대 방향
 int Collision::CCW(Vector2 p1, Vector2 p2, Vector2 p3)
 {

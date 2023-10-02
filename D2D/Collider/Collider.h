@@ -13,7 +13,7 @@ public:
 
 
 public:
-	void  Update(Matrix V, Matrix P);
+	void  Update();
 	void  UpdateColor(Color color);
 	void  Render();
 
@@ -24,7 +24,7 @@ public: // Setter
 	void	 SetPosition(Vector2 position)			  { m_Position  = position; }
 	void	 SetRotation(float x, float y, float z)   { m_Rotation  = Vector3(x, y, z); }
 	void	 SetRotation(Vector3 rot)				  { m_Rotation  = rot; }
-	
+	void	 SetActive(bool value) { m_bActive = value; }
 
 public:   // Getter
 	Vector2  GetPosition()	{ return m_Position; }
